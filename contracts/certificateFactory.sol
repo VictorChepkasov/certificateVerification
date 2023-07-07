@@ -6,26 +6,32 @@ contract certificateFactory{
     uint totalCertificates;
     uint revorkedCertificates;
 
-    mapping(address => Certificates.Certificate) certificates;
+    /*
+        адрес => владельца хэш сертификата => данные сертификата
+        Вопрос: Как второй ключ лучше использовать хэш или имя сертификата(name)?
+    */
+    mapping(address => mapping(bytes32 => Certificate.CertificateInfo)) certificates;
     mapping(address => bool) revorked;
 
-    function addCertificate(string memory _name, uint _valididty) public {
-        Certificates certificate = new Certificates(_name);
+    function issueCertificate(string memory _name, uint _valididty) public {
+        Certificate certificate = new Certificate(_name);
         certificate.issueCertificate(_valididty);
-        certificates[msg.sender] = certificate.getCertificateInfo();
+        Certificate.CertificateInfo memory certificateInfo = certificate.getCertificateInfo();
+        certificates[msg.sender][certificateInfo.documentHash] = certificateInfo;
         totalCertificates += 1;
     }
 
-    function deleteCertificate(Certificates certificate) public {
+    function revokeCertificate(Certificate certificate) public {
         certificate.revokeCertificate();
         revorkedCertificates += 1;
         totalCertificates -= 1;
 
     }
 
-    function verifyCertificate(Certificates certificate) public returns(Certificates.Certificate memory) {
-        if (block.timestamp + 1 < certificates[msg.sender].expirationDate) {
-            return certificates[msg.sender];
+    function verifyCertificate(Certificate certificate) public returns(Certificate.CertificateInfo memory) {
+        bytes32 documentHash = certificate.getCertificateInfo().documentHash;
+        if (block.timestamp + 1 < certificates[msg.sender][documentHash].expirationDate) {
+            return certificates[msg.sender][documentHash];
         } else {
             certificate.expiredCertificateNotification();
         }

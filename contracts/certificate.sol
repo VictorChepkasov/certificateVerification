@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
-contract Certificates {
-    struct Certificate {
+contract Certificate {
+    struct CertificateInfo {
         address owner;
         string nameCertificate;
         bytes32 documentHash;
@@ -13,7 +13,7 @@ contract Certificates {
         bool verified;
     }
 
-    Certificate public certificate;
+    CertificateInfo public certificate;
     
     constructor(string memory _name) {
         certificate.owner = msg.sender;
@@ -41,7 +41,7 @@ contract Certificates {
         emit ExpiredCertificate(msg.sender, certificate.expirationDate, !certificate.verified);
     }
 
-    function getCertificateInfo() public view returns(Certificate memory) {
+    function getCertificateInfo() public view returns(CertificateInfo memory) {
         return certificate;
     }
 
