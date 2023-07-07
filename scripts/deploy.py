@@ -1,4 +1,7 @@
 from brownie import certificateFactory, accounts
+from dotenv import load_dotenv
+
+load_dotenv()
 
 def main():
     account = accounts[0]
