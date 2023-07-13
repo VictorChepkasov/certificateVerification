@@ -10,5 +10,7 @@ def deployedCertificate():
     return acc, certificateContract
 
 
-def test_issueCertificate(deployedCertificate):
+def test_issueCertificate(deployedCertificate, _name='First', _validity=0):
+    acc, certificateContract = deployedCertificate
+    issueCertificate(_name, _validity)
     
