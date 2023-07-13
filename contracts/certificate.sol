@@ -16,14 +16,14 @@ contract Certificate {
 
     CertificateInfo public certificate;
     
-    constructor(string memory _name, uint _id) {
-        certificate.owner = msg.sender;
+    constructor(address owner, string memory _name, uint _id) {
+        certificate.owner = owner;
         certificate.nameCertificate = _name;
         certificate.id = _id;
     }
 
-    function issueCertificate(uint validity) external onlyRecipient {
-        certificate.documentHash = keccak256(abi.encode(certificate.owner, certificate.nameCertificate));
+    function issueCertificate(uint validity) external {
+        certificate.documentHash = keccak256(abi.encode(certificate.nameCertificate));
         certificate.lvlQualification = 1;
         certificate.dateOfIssue = block.timestamp;
         certificate.expirationDate = certificate.dateOfIssue + (86400 * validity);

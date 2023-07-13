@@ -21,3 +21,4 @@ def verifyCertificate(certificate):
 def getCertificateInfo(_hash):
     certificateInfo = certificateFactory[-1].getCertificateInfo(_hash)
     print(f'Cartificate info: {certificateInfo}')
+    return certificateInfo

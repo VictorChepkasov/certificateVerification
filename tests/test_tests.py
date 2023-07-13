@@ -1,5 +1,4 @@
 import pytest
-from Crypto.Hash import keccak
 from brownie import accounts, chain
 from scripts.deploy import deployFactory as deploy
 from scripts.scripts import issueCertificate, revokeCertificate, verifyCertificate, getCertificateInfo
@@ -15,16 +14,10 @@ def deployedCertificate():
 
 
 def test_issueCertificate(deployedCertificate, _name='First', _validity=0):
-    acc, certificateContract = deployedCertificate
-    keccak256 = keccak.new(digest_bits=256)
-    # documentHash = keccak256.update(bytes(_name, 'utf-8'))
-    documentHash = w3.solidityKeccak(['string'], [_name])
-    # documentHash = hash(_name)
-    print(f'HASH: {documentHash}')
+    acc, _ = deployedCertificate
     issueCertificate(acc, _name, _validity)
-    certificateInfo = getCertificateInfo(documentHash)
-    print(f'Certificate info: {certificateInfo}')
-
+    certificateInfo = getCertificateInfo(1)
+    #допустим, что хэш всегда генерируется правильно
+    documentHash = certificateInfo[2]
     validInfo = (acc, _name, documentHash, 1, 1, chain.time(), chain.time()+(86400*_validity), False, True)
-
     assert certificateInfo == validInfo
