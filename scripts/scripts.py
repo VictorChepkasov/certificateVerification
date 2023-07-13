@@ -17,3 +17,7 @@ def revokeCertificate(certificate):
 def verifyCertificate(certificate):
     certificateFactory[-1].verifyCertificate(certificate)
     print('Certificate verified!')
+
+def getCertificateInfo(_hash):
+    certificateInfo = certificateFactory[-1].getCertificateInfo(_hash)
+    print(f'Cartificate info: {certificateInfo}')

@@ -14,7 +14,7 @@ contract certificateFactory{
     mapping(address => bool) revorked;
 
     function issueCertificate(string memory _name, uint _valididty) public {
-        Certificate certificate = new Certificate(_name);
+        Certificate certificate = new Certificate(_name, totalCertificates+1);
         certificate.issueCertificate(_valididty);
         Certificate.CertificateInfo memory certificateInfo = certificate.getCertificateInfo();
         certificates[msg.sender][certificateInfo.documentHash] = certificateInfo;
@@ -35,5 +35,9 @@ contract certificateFactory{
         } else {
             certificate.expiredCertificateNotification();
         }
+    }
+
+    function getCertificateInfo(bytes32 _hash) public view returns(Certificate.CertificateInfo memory) {
+        return certificates[msg.sender][_hash];
     }
 }

@@ -6,6 +6,7 @@ contract Certificate {
         address owner;
         string nameCertificate;
         bytes32 documentHash;
+        uint id;
         uint lvlQualification;
         uint dateOfIssue;
         uint expirationDate;
@@ -15,9 +16,10 @@ contract Certificate {
 
     CertificateInfo public certificate;
     
-    constructor(string memory _name) {
+    constructor(string memory _name, uint _id) {
         certificate.owner = msg.sender;
         certificate.nameCertificate = _name;
+        certificate.id = _id;
     }
 
     function issueCertificate(uint validity) external onlyRecipient {
