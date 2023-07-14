@@ -9,16 +9,16 @@ contract certificateFactory{
         адрес => владельца id сертификата => данные сертификата
         Вопрос: Как второй ключ лучше использовать хэш или id сертификата?
     */
-    mapping(address => mapping(uint => Certificate.CertificateInfo)) certificatesInfo;
-    mapping(address => bool) revorked;
     mapping(uint => Certificate) certificates; 
+    mapping(uint => Certificate.CertificateInfo) certificatesInfo;
+    mapping(address => bool) revorked;
 
     function issueCertificate(string memory _name, uint _valididty) public {
         address owner = msg.sender;
         Certificate certificate = new Certificate(owner, _name, totalCertificates+1);
         certificate.issueCertificate(_valididty);
         Certificate.CertificateInfo memory certificateInfo = certificate.getCertificateInfo();
-        certificatesInfo[msg.sender][certificateInfo.id] = certificateInfo;
+        certificatesInfo[certificateInfo.id] = certificateInfo;
         certificates[totalCertificates+1] = certificate;
         totalCertificates += 1;
     }
@@ -31,15 +31,15 @@ contract certificateFactory{
 
     function verifyCertificate(Certificate certificate, uint id) public returns(Certificate.CertificateInfo memory) {
         // bytes32 documentHash = certificate.getCertificateInfo().documentHash;
-        if (block.timestamp + 1 < certificatesInfo[msg.sender][id].expirationDate) {
-            return certificatesInfo[msg.sender][id];
+        if (block.timestamp + 1 < certificatesInfo[id].expirationDate) {
+            return certificatesInfo[id];
         } else {
             certificate.expiredCertificateNotification();
         }
     }
 
     function getCertificateInfo(uint id) public view returns(Certificate.CertificateInfo memory) {
-        return certificatesInfo[msg.sender][id];
+        return certificatesInfo[id];
     }
 
     function getTotalCertificates() public view returns(uint) {
