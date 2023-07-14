@@ -5,20 +5,21 @@ import "./certificate.sol";
 contract certificateFactory{
     uint totalCertificates;
     uint revorkedCertificates;
-
     /*
-        адрес => владельца хэш сертификата => данные сертификата
-        Вопрос: Как второй ключ лучше использовать хэш или имя сертификата(name)?
+        адрес => владельца id сертификата => данные сертификата
+        Вопрос: Как второй ключ лучше использовать хэш или id сертификата?
     */
-    mapping(address => mapping(uint => Certificate.CertificateInfo)) certificates;
+    mapping(address => mapping(uint => Certificate.CertificateInfo)) certificatesInfo;
     mapping(address => bool) revorked;
+    mapping(uint => Certificate) certificates; 
 
     function issueCertificate(string memory _name, uint _valididty) public {
         address owner = msg.sender;
         Certificate certificate = new Certificate(owner, _name, totalCertificates+1);
         certificate.issueCertificate(_valididty);
         Certificate.CertificateInfo memory certificateInfo = certificate.getCertificateInfo();
-        certificates[msg.sender][certificateInfo.id] = certificateInfo;
+        certificatesInfo[msg.sender][certificateInfo.id] = certificateInfo;
+        certificates[totalCertificates+1] = certificate;
         totalCertificates += 1;
     }
 
@@ -26,19 +27,30 @@ contract certificateFactory{
         certificate.revokeCertificate();
         revorkedCertificates += 1;
         totalCertificates -= 1;
-
     }
 
-    // function verifyCertificate(Certificate certificate) public returns(Certificate.CertificateInfo memory) {
-    //     bytes32 documentHash = certificate.getCertificateInfo().documentHash;
-    //     if (block.timestamp + 1 < certificates[msg.sender][documentHash].expirationDate) {
-    //         return certificates[msg.sender][documentHash];
-    //     } else {
-    //         certificate.expiredCertificateNotification();
-    //     }
-    // }
+    function verifyCertificate(Certificate certificate, uint id) public returns(Certificate.CertificateInfo memory) {
+        // bytes32 documentHash = certificate.getCertificateInfo().documentHash;
+        if (block.timestamp + 1 < certificatesInfo[msg.sender][id].expirationDate) {
+            return certificatesInfo[msg.sender][id];
+        } else {
+            certificate.expiredCertificateNotification();
+        }
+    }
 
     function getCertificateInfo(uint id) public view returns(Certificate.CertificateInfo memory) {
-        return certificates[msg.sender][id];
+        return certificatesInfo[msg.sender][id];
+    }
+
+    function getTotalCertificates() public view returns(uint) {
+        return totalCertificates;
+    }
+
+    function getRevorkedCertificates() public view returns(uint) {
+        return revorkedCertificates;
+    }
+
+    function getCertificate(uint id) public view returns(Certificate) {
+        return certificates[id];
     }
 }
