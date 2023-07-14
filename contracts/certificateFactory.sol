@@ -3,8 +3,8 @@ pragma solidity ^0.8.17;
 import "./certificate.sol";
 
 contract certificateFactory{
-    uint totalCertificates;
-    uint revorkedCertificates;
+    uint public totalCertificates;
+    uint public revorkedCertificates;
     /*
         адрес => владельца id сертификата => данные сертификата
         Вопрос: Как второй ключ лучше использовать хэш или id сертификата?
@@ -12,6 +12,11 @@ contract certificateFactory{
     mapping(uint => Certificate) certificates; 
     mapping(uint => Certificate.CertificateInfo) certificatesInfo;
     mapping(address => bool) revorked;
+
+    constructor() {
+        totalCertificates = 0;
+        revorkedCertificates = 0;
+    }
 
     function issueCertificate(string memory _name, uint _valididty) public {
         address owner = msg.sender;
@@ -44,13 +49,5 @@ contract certificateFactory{
 
     function getCertificate(uint id) public view returns(Certificate) {
         return certificates[id];
-    }
-
-    function getTotalCertificates() public view returns(uint) {
-        return totalCertificates;
-    }
-
-    function getRevorkedCertificates() public view returns(uint) {
-        return revorkedCertificates;
     }
 }

@@ -22,16 +22,16 @@ def test_issueCertificate(deployedCertificate, _validity, _name='First'):
     documentHash = certificateInfo[2]
     validInfo = (acc, _name, documentHash, 1, 1, timestamp, timestamp+(86400*_validity), False, True)
     assert certificateInfo == validInfo
-    assert factoryContract.getTotalCertificates() == certificateInfo[3]
+    assert factoryContract.totalCertificates() == certificateInfo[3]
 
 def test_revokeCertificate(deployedCertificate, _validity, _name='Second'):
     acc, factoryContract = deployedCertificate
     issueCertificate(acc, _name, _validity)
-    totalCertificates = factoryContract.getTotalCertificates()
+    totalCertificates = factoryContract.totalCertificates()
     revokeCertificate(acc, 1)
     revoked = getCertificateInfo(1)[-2]
-    assert factoryContract.getRevorkedCertificates() == 1
-    assert factoryContract.getTotalCertificates() == totalCertificates - 1
+    assert factoryContract.revorkedCertificates() == 1
+    assert factoryContract.totalCertificates() == totalCertificates - 1
     # What the fuck?
     assert revoked == True
 
