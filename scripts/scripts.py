@@ -10,16 +10,20 @@ def issueCertificate(_from, _name, _validity):
     )
     print('Certificate issued successfully!')
 
-def revokeCertificate(_from, certificate):
-    certificateFactory[-1].revokeCertificate(certificate, {
+def revokeCertificate(_from, _id):
+    certificateFactory[-1].revokeCertificate(_id, {
         'from': _from,
         'priority_fee': '1 wei'
     })
     print('Certificate revorked!')
 
-def verifyCertificate(certificate):
-    certificateFactory[-1].verifyCertificate(certificate)
+def verifyCertificate(_from, _certificate, _id):
+    verifyInfo = certificateFactory[-1].verifyCertificate(_certificate, _id, {
+        'from': _from,
+        'priority_fee': '1 wei'
+    })
     print('Certificate verified!')
+    return verifyInfo
 
 def getCertificateInfo(_id):
     certificateInfo = certificateFactory[-1].getCertificateInfo(_id)

@@ -23,23 +23,27 @@ contract certificateFactory{
         totalCertificates += 1;
     }
 
-    function revokeCertificate(Certificate certificate) public {
-        certificate.revokeCertificate();
+    function revokeCertificate(uint id) public {
+        // certificate.revokeCertificate();
+        // What the fuck?
+        certificatesInfo[id].revoked = true;
         revorkedCertificates += 1;
         totalCertificates -= 1;
     }
 
     function verifyCertificate(Certificate certificate, uint id) public returns(Certificate.CertificateInfo memory) {
-        // bytes32 documentHash = certificate.getCertificateInfo().documentHash;
-        if (block.timestamp + 1 < certificatesInfo[id].expirationDate) {
-            return certificatesInfo[id];
-        } else {
+        if (block.timestamp > certificatesInfo[id].expirationDate) {
             certificate.expiredCertificateNotification();
         }
+        return certificatesInfo[id];
     }
 
     function getCertificateInfo(uint id) public view returns(Certificate.CertificateInfo memory) {
         return certificatesInfo[id];
+    }
+
+    function getCertificate(uint id) public view returns(Certificate) {
+        return certificates[id];
     }
 
     function getTotalCertificates() public view returns(uint) {
@@ -48,9 +52,5 @@ contract certificateFactory{
 
     function getRevorkedCertificates() public view returns(uint) {
         return revorkedCertificates;
-    }
-
-    function getCertificate(uint id) public view returns(Certificate) {
-        return certificates[id];
     }
 }
