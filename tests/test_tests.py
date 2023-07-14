@@ -1,11 +1,10 @@
 import pytest
 from brownie import accounts, chain
+from web3 import Web3, EthereumTesterProvider
 from scripts.deploy import deployFactory as deploy
 from scripts.scripts import issueCertificate, revokeCertificate, verifyCertificate, getCertificateInfo
 
-from web3 import Web3, EthereumTesterProvider
 w3 = Web3(EthereumTesterProvider())
-
 pytestmark = pytest.mark.parametrize('_validity', [0, 1, 2])
 
 @pytest.fixture()
