@@ -13,23 +13,23 @@ def deployedCertificate(autouse=True):
     certificateContract = deploy(acc)
     return acc, certificateContract
 
-def test_issueCertificate(deployedCertificate, _validity, _name='First'):
+def test_issueCertificate(deployedCertificate, _validity, _id=1, _name='First'):
     acc, factoryContract = deployedCertificate
     issueCertificate(acc, _name, _validity)
     timestamp = chain.time()
-    certificateInfo = getCertificateInfo(1)
+    certificateInfo = getCertificateInfo(_id)
     #допустим, что хэш всегда генерируется правильно
     documentHash = certificateInfo[2]
-    validInfo = (acc, _name, documentHash, 1, 1, timestamp, timestamp+(86400*_validity), False, True)
+    validInfo = (acc, _name, documentHash, _id, 1, timestamp, timestamp+(86400*_validity), False, True)
     assert certificateInfo == validInfo
     assert factoryContract.totalCertificates() == certificateInfo[3]
 
-def test_revokeCertificate(deployedCertificate, _validity, _name='Second'):
+def test_revokeCertificate(deployedCertificate, _validity, _id=1, _name='Second'):
     acc, factoryContract = deployedCertificate
     issueCertificate(acc, _name, _validity)
     totalCertificates = factoryContract.totalCertificates()
-    revokeCertificate(acc, 1)
-    revoked = getCertificateInfo(1)[-2]
+    revokeCertificate(acc, _id)
+    revoked = getCertificateInfo(_id)[-2]
     assert factoryContract.revorkedCertificates() == 1
     assert factoryContract.totalCertificates() == totalCertificates - 1
     # What the fuck?
